@@ -1,25 +1,89 @@
 const axios = require("axios");
+const {result} = require("./read");
+
+const books = result.books;
+const authors = result.authors;
+var createBookResponse, createAuthorResponse, createCategoryResponse;
+
+// async function createCategory(){
+//   return await axios.post("http://localhost:3000/api/category/create", {
+//     name: books[0].category
+//   });
+// }
+
+// async function createAuthor(){
+//   return await axios.post("http://localhost:3000/api/author/create", {
+//     name: books[0].author,
+//     jobTitle: authors[10].jobTitle //"Dynamic Branding Analyst"
+//    // bio: authors[10].bio
+//   });
+// }
+
+// axios.all([createCategory(), createAuthor()])
+//   .then(axios.spread(function (createCategoryResponse, createAuthorResponse) {
+//     console.log('category', createCategoryResponse.data.data);
+//     console.log('author', createAuthorResponse.data.data);
+//     //console.log('book', createBookResponse.data.data);
+//   }))
+//   .catch(function(error) {
+//     console.log(error);
+//   });
 
 axios
-  .post("http://localhost:3000/api/category", {
-    page: 1,
-    size: 5,
-    sortBy: "name"
+  .post("http://localhost:3000/api/author/create", {
+    name: books[0].author,
+    jobTitle: authors[10].jobTitle,
+    bio: authors[10].bio
   })
   .then(function(response) {
-    console.log(response.data);
+
+    createAuthorResponse = response.data;
+    console.log(createAuthorResponse);
+
+     axios.post("http://localhost:3000/api/category/create", {
+      name: books[0].category
+    })
+    .then(function(response) {
+      createCategoryResponse = response.data;
+      console.log(createCategoryResponse);
+
+    axios.post("http://localhost:3000/api/book/create", {
+    title: books[0].title,
+    author: books[0].author,
+    description: books[0].description,
+    isbn: books[0].isbn,
+    publishYear: books[0].publishYear,
+    pagesNumber: books[0].pagesNumber,
+    image: books[0].image,
+    category: books[0].category
+  })
+  .then(function(response) {
+    createBookResponse = response.data;
+    console.log(createBookResponse);
+   }).catch(function(error) {
+    console.log(error);
+  })
+  
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+
   })
   .catch(function(error) {
     console.log(error);
   });
 
-// axios
-//   .get(
-//     "http://localhost:3000/api/category/dc1d741a-d4e9-4e64-b33a-4eeb0970903c"
-//   )
-//   .then(function(response) {
-//     console.log(response.data);
+// axios.all([
+//   axios.get("http://localhost:3000/api/author/0bd54fc7-cad9-4b5e-9851-0368866e95fc"),
+//   axios.put("http://localhost:3000/api/update/author/0bd54fc7-cad9-4b5e-9851-0368866e95fc", {
+//     name: "updated name"
 //   })
-//   .catch(function(error) {
-//     console.log(error);
-//   });
+// ])
+// .then(axios.spread(function (getResponse, updateResponse) {
+//   console.log('author', getResponse.data.data);
+//   console.log('author after update', updateResponse.data.data);
+// }))
+// .catch(function(error) {
+//   console.log(error);
+// });
