@@ -1,39 +1,26 @@
 const axios = require("axios");
+const _ = require("lodash");
 const {result} = require("./read");
 
 const books = result.books;
 const authors = result.authors;
 var createBookResponse, createAuthorResponse, createCategoryResponse;
 
-// async function createCategory(){
-//   return await axios.post("http://localhost:3000/api/category/create", {
-//     name: books[0].category
-//   });
-// }
+var currentAuthor = _.find(authors,function(i) {
+  return i.name == books[0].author;
+});
+var currentJobTitle = currentAuthor.jobTitle;
+var currentBio = currentAuthor.bio;
 
-// async function createAuthor(){
-//   return await axios.post("http://localhost:3000/api/author/create", {
-//     name: books[0].author,
-//     jobTitle: authors[10].jobTitle //"Dynamic Branding Analyst"
-//    // bio: authors[10].bio
-//   });
-// }
+console.log(currentJobTitle);
+console.log(currentBio);
 
-// axios.all([createCategory(), createAuthor()])
-//   .then(axios.spread(function (createCategoryResponse, createAuthorResponse) {
-//     console.log('category', createCategoryResponse.data.data);
-//     console.log('author', createAuthorResponse.data.data);
-//     //console.log('book', createBookResponse.data.data);
-//   }))
-//   .catch(function(error) {
-//     console.log(error);
-//   });
-
+//COMMENTTTTTTT 
 axios
   .post("http://localhost:3000/api/author/create", {
     name: books[0].author,
-    jobTitle: authors[10].jobTitle,
-    bio: authors[10].bio
+    jobTitle: currentJobTitle,
+    bio: currentBio
   })
   .then(function(response) {
 
@@ -73,6 +60,31 @@ axios
   .catch(function(error) {
     console.log(error);
   });
+//COMMENTTTTT ENDDDDD
+
+// async function createCategory(){
+//   return await axios.post("http://localhost:3000/api/category/create", {
+//     name: books[0].category
+//   });
+// }
+
+// async function createAuthor(){
+//   return await axios.post("http://localhost:3000/api/author/create", {
+//     name: books[0].author,
+//     jobTitle: authors[10].jobTitle //"Dynamic Branding Analyst"
+//    // bio: authors[10].bio
+//   });
+// }
+
+// axios.all([createCategory(), createAuthor()])
+//   .then(axios.spread(function (createCategoryResponse, createAuthorResponse) {
+//     console.log('category', createCategoryResponse.data.data);
+//     console.log('author', createAuthorResponse.data.data);
+//     //console.log('book', createBookResponse.data.data);
+//   }))
+//   .catch(function(error) {
+//     console.log(error);
+//   });
 
 // axios.all([
 //   axios.get("http://localhost:3000/api/author/0bd54fc7-cad9-4b5e-9851-0368866e95fc"),
