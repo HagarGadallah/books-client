@@ -1,66 +1,80 @@
 const axios = require("axios");
 const _ = require("lodash");
-const {result} = require("./read");
+const { result } = require("./read");
 
 const books = result.books;
 const authors = result.authors;
+var categories = [];
 var createBookResponse, createAuthorResponse, createCategoryResponse;
 
-var currentAuthor = _.find(authors,function(i) {
-  return i.name == books[0].author;
-});
-var currentJobTitle = currentAuthor.jobTitle;
-var currentBio = currentAuthor.bio;
+(async () => {
+  try {
+    //pick out all categories in the file and push them to an array
+    for (let i = 0; i < books.length; i++) {
+      var pickedCategories = _.pick(books[i], "category");
+      categories.push(pickedCategories.category);
+    }
 
-console.log(currentJobTitle);
-console.log(currentBio);
+    var removedDuplicatesCategories = _.uniq(categories);
 
-//COMMENTTTTTTT 
-axios
-  .post("http://localhost:3000/api/author/create", {
-    name: books[0].author,
-    jobTitle: currentJobTitle,
-    bio: currentBio
-  })
-  .then(function(response) {
+    //Create categories
+    for (let i = 0; i < removedDuplicatesCategories.length; i++) {
+      await axios
+        .post("http://localhost:3000/api/category/create", {
+          name: removedDuplicatesCategories[i]
+        })
+        .then(function(response) {
+          createCategoryResponse = response.data;
+          console.log(createCategoryResponse);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
 
-    createAuthorResponse = response.data;
-    console.log(createAuthorResponse);
+    // Creating Authors
+    for (let i = 0; i < authors.length; i++) {
+      await axios
+        .post("http://localhost:3000/api/author/create", {
+          name: authors[i].name,
+          jobTitle: authors[i].jobTitle,
+          bio: authors[i].bio
+        })
+        .then(function(response) {
+          createAuthorResponse = response.data;
+          console.log(createAuthorResponse);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
 
-     axios.post("http://localhost:3000/api/category/create", {
-      name: books[0].category
-    })
-    .then(function(response) {
-      createCategoryResponse = response.data;
-      console.log(createCategoryResponse);
-
-    axios.post("http://localhost:3000/api/book/create", {
-    title: books[0].title,
-    author: books[0].author,
-    description: books[0].description,
-    isbn: books[0].isbn,
-    publishYear: books[0].publishYear,
-    pagesNumber: books[0].pagesNumber,
-    image: books[0].image,
-    category: books[0].category
-  })
-  .then(function(response) {
-    createBookResponse = response.data;
-    console.log(createBookResponse);
-   }).catch(function(error) {
-    console.log(error);
-  })
-  
-    })
-    .catch(function(error) {
-      console.log(error);
-    });
-
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
-//COMMENTTTTT ENDDDDD
+    //Creating Books
+    for (let i = 0; i < books.length; i++) {
+      await axios
+        .post("http://localhost:3000/api/book/create", {
+          title: books[i].title,
+          author: books[i].author,
+          description: books[i].description,
+          isbn: books[i].isbn,
+          publishYear: books[i].publishYear,
+          pagesNumber: books[i].pagesNumber,
+          image: books[i].image,
+          category: books[i].category
+        })
+        .then(function(response) {
+          createBookResponse = response.data;
+          console.log(createBookResponse);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+})(); ///FUNCTIOOONNNNNN ENNNNDDDDDDDDDD
 
 // async function createCategory(){
 //   return await axios.post("http://localhost:3000/api/category/create", {
